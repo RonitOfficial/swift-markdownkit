@@ -46,9 +46,7 @@ open class AttributedStringGenerator {
         open override func generate(block: Block, tight: Bool = false) -> String {
             switch block {
             case .list(_, _, _):
-                let listHtml = super.generate(block: block, tight: tight)
-                print("listHtml: \(super.generate(block: block, tight: tight)), tight: \(tight)")
-                return listHtml
+                return super.generate(block: block, tight: tight)
             case .indentedCode(_),
                     .fencedCode(_, _):
                 return "<table style=\"width: 100%; margin-bottom: 3px;\"><tbody><tr>" +
@@ -410,13 +408,13 @@ open class AttributedStringGenerator {
     }
     
     open var h1Style: String {
-        return "font-size: \(self.fontSize + 6)px;" +
+        return "font-size: \(self.fontSize + 4)px;" +
         "color: \(self.h1Color);" +
         "margin: 0.7em 0 0.5em 0;"
     }
     
     open var h2Style: String {
-        return "font-size: \(self.fontSize + 4)px;" +
+        return "font-size: \(self.fontSize + 3)px;" +
         "color: \(self.h2Color);" +
         "margin: 0.6em 0 0.4em 0;"
     }
