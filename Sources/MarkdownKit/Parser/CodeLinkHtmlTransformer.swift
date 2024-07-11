@@ -83,7 +83,7 @@ open class CodeLinkHtmlTransformer: InlineTransformer {
                   element = iterator.next()
                   continue loop
                 } else if isHtmlTag(content) {
-                  res.append(fragment: .html(Substring(content)))
+//                  res.append(fragment: .html(Substring(content)))
                   iterator = scanner
                   element = iterator.next()
                   continue loop

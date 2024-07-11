@@ -57,17 +57,17 @@ open class HtmlGenerator {
         return "<blockquote>\n" + self.generate(blocks: blocks) + "</blockquote>\n"
       case .list(let start, let tight, let blocks):
         if let startNumber = start {
-          return "<ol start=\"\(startNumber)\">\n" +
+          return "<ol start=\"\(startNumber)\">" +
                  self.generate(blocks: blocks, tight: tight) +
-                 "</ol>\n"
+                 "</ol>"
         } else {
-          return "<ul>\n" + self.generate(blocks: blocks, tight: tight) + "</ul>\n"
+          return "<ul>" + self.generate(blocks: blocks, tight: tight) + "</ul>"
         }
-      case .listItem(_, _, let blocks):
+      case .listItem(_, let tight, let blocks):
         if tight, let text = blocks.text {
-          return "<li>" + self.generate(text: text) + "</li>\n"
+          return "<li>" + self.generate(text: text) + "</li>"
         } else {
-          return "<li>" + self.generate(blocks: blocks) + "</li>\n"
+          return self.generate(blocks: blocks)
         }
       case .paragraph(let text):
         return "<p>" + self.generate(text: text) + "</p>\n"
@@ -75,18 +75,18 @@ open class HtmlGenerator {
         let tag = "h\(n > 0 && n < 7 ? n : 1)>"
         return "<\(tag)\(self.generate(text: text))</\(tag)\n"
       case .indentedCode(let lines):
-        return "<pre><code>" +
+        return "&nbsp<pre><code>" +
                self.generate(lines: lines).encodingPredefinedXmlEntities() +
-               "</code></pre>\n"
+               "</code></pre>\n&nbsp"
       case .fencedCode(let lang, let lines):
         if let language = lang {
-          return "<pre><code class=\"\(language)\">" +
+          return "&nbsp<pre><code class=\"\(language)\">" +
                  self.generate(lines: lines, separator: "").encodingPredefinedXmlEntities() +
-                 "</code></pre>\n"
+                 "</code></pre>\n&nbsp"
         } else {
-          return "<pre><code>" +
+          return "&nbsp<pre><code>" +
                  self.generate(lines: lines, separator: "").encodingPredefinedXmlEntities() +
-                 "</code></pre>\n"
+                 "</code></pre>\n&nbsp"
         }
       case .htmlBlock(let lines):
         return self.generate(lines: lines)
@@ -161,7 +161,7 @@ open class HtmlGenerator {
       case .text(let str):
         return String(str).decodingNamedCharacters().encodingPredefinedXmlEntities()
       case .code(let str):
-        return "<code>" + String(str).encodingPredefinedXmlEntities() + "</code>"
+        return "<code>&nbsp" + String(str).encodingPredefinedXmlEntities() + "&nbsp</code>"
       case .emph(let text):
         return "<em>" + self.generate(text: text) + "</em>"
       case .strong(let text):
