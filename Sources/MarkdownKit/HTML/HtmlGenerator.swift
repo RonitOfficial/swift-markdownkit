@@ -157,6 +157,7 @@ open class HtmlGenerator {
   }
 
   open func generate(textFragment fragment: TextFragment) -> String {
+      var queryParamDivider = "?"
     switch fragment {
       case .text(let str):
         return String(str).decodingNamedCharacters().encodingPredefinedXmlEntities()
@@ -168,18 +169,46 @@ open class HtmlGenerator {
         return "<strong>" + self.generate(text: text) + "</strong>"
       case .link(let text, let uri, let title):
         let titleAttr = title == nil ? "" : " title=\"\(title!)\""
-        return "<a href=\"\(uri ?? "")\"\(titleAttr)>" + self.generate(text: text) + "</a>"
+        if(uri?.contains("?") ?? false){
+            queryParamDivider = "&"
+        }
+        var finalUrl = uri ?? ""
+        if(!finalUrl.isEmpty){
+            finalUrl += queryParamDivider+"customUrlType=link"
+        }
+        return "<a href=\"\(finalUrl)\" \(titleAttr)>" + self.generate(text: text) + "</a>"
       case .autolink(let type, let str):
         switch type {
           case .uri:
-            return "<a href=\"\(str)\">\(str)</a>"
+            if(str.contains("?") ?? false){
+                queryParamDivider = "&"
+            }
+            var finalUrl = str ?? ""
+            if(!finalUrl.isEmpty){
+                finalUrl += queryParamDivider+"customUrlType=autolink"
+            }
+            return "<a href=\"\(finalUrl)\">\(str)</a>"
           case .email:
-            return "<a href=\"mailto:\(str)\">\(str)</a>"
+            if(str.contains("?") ?? false){
+                queryParamDivider = "&"
+            }
+            var finalUrl = str ?? ""
+            if(!finalUrl.isEmpty){
+                finalUrl += queryParamDivider+"customUrlType=email"
+            }
+            return "<a href=\"mailto:\(finalUrl)\">\(str)</a>"
         }
       case .image(let text, let uri, let title):
         let titleAttr = title == nil ? "" : " title=\"\(title!)\""
         if let uri = uri {
-          return "<img src=\"\(uri)\" alt=\"\(text.rawDescription)\"\(titleAttr)/>"
+            if(uri.contains("?") ?? false){
+                queryParamDivider = "&"
+            }
+            var finalUrl = uri ?? ""
+            if(!finalUrl.isEmpty){
+                finalUrl += queryParamDivider+"customUrlType=image"
+            }
+          return "<a href=\"\(finalUrl)\" alt=\"\(text.rawDescription)\"\(titleAttr)/>"
         } else {
           return self.generate(text: text)
         }
