@@ -116,6 +116,7 @@ open class AttributedStringGenerator {
         open override func generate(textFragment fragment: TextFragment) -> String {
             switch fragment {
             case .image(let text, let uri, let title):
+                var queryParamDivider = "?"
                 let titleAttr = title == nil ? "" : " title=\"\(title!)\""
                 if let uriStr = uri {
                     let url = URL(string: uriStr)
@@ -123,10 +124,25 @@ open class AttributedStringGenerator {
                        let baseUrl = self.outer?.imageBaseUrl {
                         let url = URL(fileURLWithPath: uriStr, relativeTo: baseUrl)
                         if url.isFileURL {
-                            return "<a href=\"\(url.absoluteString)\" alt=\"\(text.rawDescription)\"\(titleAttr)/>"
+                            if(url.absoluteString.contains("?")){
+                                queryParamDivider = "&"
+                            }
+                            var finalUrl = url.absoluteString
+                            if(!finalUrl.isEmpty){
+                                finalUrl += queryParamDivider+"customUrlType=image"
+                            }
+                            return "<a href=\"\(finalUrl)\" alt=\"\(text.rawDescription)\"\(titleAttr)/>"
                         }
                     }
-                    return "<a href=\"\(uriStr)\">\(text.rawDescription.isEmpty ? titleAttr:text.rawDescription)</a>"
+                    
+                    if(uriStr.contains("?")){
+                        queryParamDivider = "&"
+                    }
+                    var finalUrl = uriStr
+                    if(!finalUrl.isEmpty){
+                        finalUrl += queryParamDivider+"customUrlType=image"
+                    }
+                    return "<a href=\"\(finalUrl)\">\(text.rawDescription.isEmpty ? titleAttr:text.rawDescription)</a>"
                 } else {
                     return self.generate(text: text)
                 }
